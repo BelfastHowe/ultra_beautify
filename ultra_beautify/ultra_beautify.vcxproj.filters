@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="map_beautify.h">
+    <ClInclude Include="map_beautify.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -23,5 +23,24 @@
     <ClCompile Include="map_beautify.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="map_beautify_2.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="map_beautify_3.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="build.bat">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="demo_CMakeLists.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="mb_CMakeLists.txt">
+      <Filter>资源文件</Filter>
+    </Text>
   </ItemGroup>
 </Project>

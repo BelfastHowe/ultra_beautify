@@ -1,0 +1,59 @@
+cmake_minimum_required(VERSION 2.8)
+project(map_beautify)
+
+set(CMAKE_CXX_STANDARD 14)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -DHOSLAM_SDK_EXPORT -fdata-sections -ffunction-sections -fvisibility=hidden -fvisibility-inlines-hidden -fPIC -funwind-tables -Wfatal-errors")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DHOSLAM_SDK_EXPORT -fdata-sections -ffunction-sections -fvisibility=hidden -fPIC")
+
+
+set(PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/)
+set(PROJECT_SOURCES_DIR ${PROJECT_SOURCE_DIR}/)
+
+include_directories("${PROJECT_INCLUDE_DIR}"
+    "${PROJECT_INCLUDE_DIR}/.."
+	"${PROJECT_INCLUDE_DIR}/../flood_fill"
+	"${PROJECT_INCLUDE_DIR}/../JPSPlusGoalBounding"
+	"${PROJECT_INCLUDE_DIR}/../jps_02"
+    "${PROJECT_INCLUDE_DIR}/../../cartographer")
+include_directories("${CMAKE_PREFIX_PATH}/include")
+include_directories("${CMAKE_PREFIX_PATH}/include/eigen3")
+include_directories("${CMAKE_PREFIX_PATH}/include/opencv")
+include_directories("${CMAKE_PREFIX_PATH}/include/opencv2")
+
+file(GLOB MAP_BEAUTIFY_SRCS "${PROJECT_SOURCES_DIR}/*.cpp")
+
+add_library(${PROJECT_NAME} STATIC "${MAP_BEAUTIFY_SRCS}")
+
+
+#set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-Wl,--gc-sections -Wl,--no-export-dynamic -Wl,--exclude-libs,ALL")
+add_link_options(
+    -Wl,--gc-sections -Wl,--as-needed
+    -static-libgcc -static-libstdc++
+    -Wl,--cref,-Map,${LIBRARY_OUTPUT_PATH}${PROJECT_NAME}.map 
+)
+
+find_package(Boost REQUIRED COMPONENTS iostreams)
+#find_package(Eigen REQUIRED)
+#target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC "${EIGEN_INCLUDE_DIR}")
+#target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC "${EIGEN3_INCLUDE_DIR}")
+
+target_link_libraries(${PROJECT_NAME} PUBLIC ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libopencv_core.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libopencv_imgproc.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libopencv_ml.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libopencv_features2d.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libopencv_flann.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libopencv_contrib.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libopencv_highgui.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libboost_filesystem.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libboost_system.a)
+
+#target_link_libraries(${PROJECT_NAME} pthread rt dl)
+
+install(
+  TARGETS ${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+)
+
+

@@ -1,0 +1,83 @@
+cmake_minimum_required (VERSION 2.8)
+
+option(USE_SHARED_LIBS "use shared hoslam_sdk.so or hoslam_sdk.a" OFF)
+
+project (demo_rplidar)
+
+add_executable(${PROJECT_NAME} demo_rplidar.cpp hoslam_cleaning.cpp hoslam_docking/dock-signal-list.cpp hoslam_docking/hoslam_docking.cpp)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fdata-sections -ffunction-sections -fvisibility=hidden -fvisibility-inlines-hidden -fPIC")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fdata-sections -ffunction-sections -fvisibility=hidden -fPIC")
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-Wl,--gc-sections -Wl,--no-export-dynamic -Wl,--exclude-libs,ALL")
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ../app ../app/sdk_release ../demos)
+
+if(USE_SHARED_LIBS)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libhoslam_sdk.so)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libgfortran.so)
+#target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libline_laser.so)
+
+else()
+
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libmini_eslam.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libhoslam_sdk.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libmini_eslam.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libcartographer.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libmap_beautify.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libceres.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libglog.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/non-pic/libprotobuf.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libcairo.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/liblua.a)
+#target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/non-pic/libpixman-1.a)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libspqr.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libcholmod.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libamd.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libcamd.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libccolamd.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libcolamd.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libsuitesparseconfig.a)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/liblapack.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libblas.a)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libopencv_core.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libopencv_imgproc.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libopencv_ml.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libopencv_features2d.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libopencv_flann.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libopencv_contrib.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libopencv_highgui.a)
+#target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libdlib.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libboost_filesystem.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libboost_system.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libboost_iostreams.a)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libgfortran.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libpng16.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libz.a)
+
+endif() # USE_SHARED_LIBS
+
+target_link_libraries(${PROJECT_NAME} PUBLIC dl)
+target_link_libraries(${PROJECT_NAME} PUBLIC rt)
+target_link_libraries(${PROJECT_NAME} PUBLIC stdc++fs)
+target_link_libraries(${PROJECT_NAME} PUBLIC pthread)
+#target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libline_laser.so)
+
+if(USE_SHARED_LIBS)
+project (demo_hoslam)
+add_executable(${PROJECT_NAME} demo_hoslam.cpp hoslam_cleaning.cpp hoslam_docking/dock-signal-list.cpp hoslam_docking/hoslam_docking.cpp)
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ../app ../app/sdk_release ../demos)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libhoslam_sdk.so)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libgfortran.so)
+
+project (demo_hoslam_hidden)
+add_executable(${PROJECT_NAME} demo_hoslam_hidden.cpp)
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-Wl,--gc-sections -Wl,--no-export-dynamic -Wl,--exclude-libs,ALL")
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ../hoslam_hidden/ ../app ../app/sdk_release ../demos)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libhoslam_sdk.so)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libgfortran.so)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib/libhoslam_hidden.so)
+
+endif()
