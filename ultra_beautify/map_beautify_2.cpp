@@ -34,22 +34,29 @@ mark_domains(CDT& ct,
 	int index,
 	std::list<CDT::Edge>& border)
 {
-	if (start->info().nesting_level != -1) {
+	if (start->info().nesting_level != -1)
+	{
 		return;
 	}
 	std::list<Face_handle> queue;
 	queue.push_back(start);
-	while (!queue.empty()) {
+	while (!queue.empty())
+	{
 		Face_handle fh = queue.front();
 		queue.pop_front();
-		if (fh->info().nesting_level == -1) {
+		if (fh->info().nesting_level == -1) 
+		{
 			fh->info().nesting_level = index;
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < 3; i++)
+			{
 				CDT::Edge e(fh, i);
 				Face_handle n = fh->neighbor(i);
-				if (n->info().nesting_level == -1) {
-					if (ct.is_constrained(e)) border.push_back(e);
-					else queue.push_back(n);
+				if (n->info().nesting_level == -1)
+				{
+					if (ct.is_constrained(e))
+						border.push_back(e);
+					else 
+						queue.push_back(n);
 				}
 			}
 		}
