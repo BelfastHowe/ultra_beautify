@@ -1,4 +1,4 @@
-#include "map_beautify.hpp"
+ï»¿#include "map_beautify.hpp"
 #include <vector>
 
 
@@ -22,10 +22,10 @@ using namespace std;
 
 
 
-//Èı½Ç»¯
+//ä¸‰è§’åŒ–
 void Triangulate()
 {
-    //ÕÒµ½±ß½çÉÏËùÓĞµÄÏñËØµã
+    //æ‰¾åˆ°è¾¹ç•Œä¸Šæ‰€æœ‰çš„åƒç´ ç‚¹
     vector<cv::Point> ROIBoundPointList;
     //CalBoundPoint(ROIBoundPointList);
 
@@ -50,8 +50,8 @@ void Triangulate()
 
     //CGAL::refine_Delaunay_mesh_2(cdt, Criteria());
 
-    // ÉèÖÃÏ¸»¯±ê×¼²¢Ê¹ÓÃĞÂµÄ refine_Delaunay_mesh_2 º¯Êı
-    Criteria criteria(0.125, 0.5);  // ÉèÖÃÏ¸»¯±ê×¼µÄ²ÎÊı£¨ÀıÈç×î´ó±ß³¤ºÍĞÎ×´ÖÊÁ¿²ÎÊı£©
+    // è®¾ç½®ç»†åŒ–æ ‡å‡†å¹¶ä½¿ç”¨æ–°çš„ refine_Delaunay_mesh_2 å‡½æ•°
+    Criteria criteria(0.125, 0.5);  // è®¾ç½®ç»†åŒ–æ ‡å‡†çš„å‚æ•°ï¼ˆä¾‹å¦‚æœ€å¤§è¾¹é•¿å’Œå½¢çŠ¶è´¨é‡å‚æ•°ï¼‰
     CGAL::refine_Delaunay_mesh_2(cdt, CGAL::parameters::criteria(criteria));
 
 
@@ -72,10 +72,10 @@ void Triangulate()
     bTri = true;
     update();*/
 
-    // ±éÀú²¢Êä³öÏ¸»¯ºóµÄÈı½ÇĞÎ
+    // éå†å¹¶è¾“å‡ºç»†åŒ–åçš„ä¸‰è§’å½¢
     for (CDT::Face_iterator fit = cdt.faces_begin(); fit != cdt.faces_end(); ++fit)
     {
-        if (cdt.is_infinite(fit)) continue;  // ºöÂÔÎŞÏŞÃæ
+        if (cdt.is_infinite(fit)) continue;  // å¿½ç•¥æ— é™é¢
 
         std::cout << "Triangle vertices:" << std::endl;
         for (int i = 0; i < 3; i++) {

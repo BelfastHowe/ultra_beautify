@@ -131,6 +131,7 @@
     <ClInclude Include="map_beautify.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="example.cpp" />
     <ClCompile Include="map_beautify.cpp" />
     <ClCompile Include="map_beautify_2.cpp" />
     <ClCompile Include="map_beautify_3.cpp" />

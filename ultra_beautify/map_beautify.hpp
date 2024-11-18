@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #ifndef _MAP_BEAUTIFY_HPP_
 #define _MAP_BEAUTIFY_HPP_
@@ -34,11 +34,11 @@ void keepLargestContour(std::vector<std::vector<cv::Point>>& contours)
 {
     if (contours.empty()) return;
 
-    // ³õÊ¼»¯×î´óÃæ»ıºÍË÷Òı
+    // åˆå§‹åŒ–æœ€å¤§é¢ç§¯å’Œç´¢å¼•
     double maxArea = 0.0;
     int maxIndex = 0;
 
-    // ±éÀúÂÖÀª£¬ÕÒµ½×î´óÃæ»ıµÄÂÖÀª
+    // éå†è½®å»“ï¼Œæ‰¾åˆ°æœ€å¤§é¢ç§¯çš„è½®å»“
     for (int i = 0; i < contours.size(); i++)
     {
         double area = cv::contourArea(contours[i]);
@@ -49,7 +49,7 @@ void keepLargestContour(std::vector<std::vector<cv::Point>>& contours)
         }
     }
 
-    // ±£Áô×î´óÃæ»ıµÄÂÖÀª
+    // ä¿ç•™æœ€å¤§é¢ç§¯çš„è½®å»“
     contours = { contours[maxIndex] };
 }
 

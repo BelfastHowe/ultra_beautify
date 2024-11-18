@@ -1,4 +1,4 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+ï»¿#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Polygon_2.h>
@@ -9,11 +9,11 @@
 
 struct FaceInfo2
 {
-	FaceInfo2() {}
-	int nesting_level;
-	bool in_domain() {
-		return nesting_level % 2 == 1;
-	}
+    //FaceInfo2() {}
+    int nesting_level = -1;
+    bool in_domain() {
+        return nesting_level % 2 == 1;
+    }
 };
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel       K;
@@ -30,37 +30,37 @@ typedef CDT::Face_handle                                          Face_handle;
 
 void
 mark_domains(CDT& ct,
-	Face_handle start,
-	int index,
-	std::list<CDT::Edge>& border)
+    Face_handle start,
+    int index,
+    std::list<CDT::Edge>& border)
 {
-	if (start->info().nesting_level != -1)
-	{
-		return;
-	}
-	std::list<Face_handle> queue;
-	queue.push_back(start);
-	while (!queue.empty())
-	{
-		Face_handle fh = queue.front();
-		queue.pop_front();
-		if (fh->info().nesting_level == -1) 
-		{
-			fh->info().nesting_level = index;
-			for (int i = 0; i < 3; i++)
-			{
-				CDT::Edge e(fh, i);
-				Face_handle n = fh->neighbor(i);
-				if (n->info().nesting_level == -1)
-				{
-					if (ct.is_constrained(e))
-						border.push_back(e);
-					else 
-						queue.push_back(n);
-				}
-			}
-		}
-	}
+    if (start->info().nesting_level != -1)
+    {
+        return;
+    }
+    std::list<Face_handle> queue;
+    queue.push_back(start);
+    while (!queue.empty())
+    {
+        Face_handle fh = queue.front();
+        queue.pop_front();
+        if (fh->info().nesting_level == -1) 
+        {
+            fh->info().nesting_level = index;
+            for (int i = 0; i < 3; i++)
+            {
+                CDT::Edge e(fh, i);
+                Face_handle n = fh->neighbor(i);
+                if (n->info().nesting_level == -1)
+                {
+                    if (ct.is_constrained(e))
+                        border.push_back(e);
+                    else 
+                        queue.push_back(n);
+                }
+            }
+        }
+    }
 }
 //explore set of facets connected with non constrained edges,
 //and attribute to each such set a nesting level.
@@ -68,120 +68,115 @@ mark_domains(CDT& ct,
 //level of 0. Then we recursively consider the non-explored facets incident
 //to constrained edges bounding the former set and increase the nesting level by 1.
 //Facets in the domain are those with an odd nesting level.
-//Ì½Ë÷Óë·ÇÔ¼Êø±ßÏàÁ¬µÄÃæ¼¯£¬
-//²¢ÎªÃ¿¸öÕâÑùµÄ¼¯ºÏ¸³ÓèÒ»¸öÇ¶Ì×¼¶±ð¡£
-//ÎÒÃÇ´ÓÓëÎÞÏÞ¶¥µãÏà¹ØµÄÃæ¿ªÊ¼£¬Ç¶Ì×
-//¼¶±ðÎª 0¡£È»ºóÎÒÃÇµÝ¹éµØ¿¼ÂÇÓëÇ°Ò»¸ö¼¯ºÏµÄÔ¼Êø±ßÏà¹ØµÄ·ÇÌ½Ë÷Ãæ£¬²¢½«Ç¶Ì×¼¶±ðÔö¼Ó 1¡£
-//ÓòÖÐµÄÃæÊÇ¾ßÓÐÆæÊýÇ¶Ì×¼¶±ðµÄÃæ¡£
 void
 mark_domains(CDT& cdt)
 {
-	for (CDT::Face_handle f : cdt.all_face_handles()) {
-		f->info().nesting_level = -1;
-	}
-	std::list<CDT::Edge> border;
-	mark_domains(cdt, cdt.infinite_face(), 0, border);
-	while (!border.empty()) {
-		CDT::Edge e = border.front();
-		border.pop_front();
-		Face_handle n = e.first->neighbor(e.second);
-		if (n->info().nesting_level == -1) {
-			mark_domains(cdt, n, e.first->info().nesting_level + 1, border);
-		}
-	}
+    for (CDT::Face_handle f : cdt.all_face_handles()) {
+        f->info().nesting_level = -1;
+    }
+    std::list<CDT::Edge> border;
+    mark_domains(cdt, cdt.infinite_face(), 0, border);
+    while (!border.empty()) {
+        CDT::Edge e = border.front();
+        border.pop_front();
+        Face_handle n = e.first->neighbor(e.second);
+        if (n->info().nesting_level == -1) {
+            mark_domains(cdt, n, e.first->info().nesting_level + 1, border);
+        }
+    }
 }
 
 
 int main_2()
 {
-	//´´½¨Èý¸ö²»Ïà½»µÄÇ¶Ì×¶à±ßÐÎ
-	Polygon_2 polygon1;
-	polygon1.push_back(Point(-0.558868038740926, -0.38960351089588));
-	polygon1.push_back(Point(2.77833686440678, 5.37465950363197));
-	polygon1.push_back(Point(6.97052814769976, 8.07751967312349));
-	polygon1.push_back(Point(13.9207400121065, 5.65046156174335));
-	polygon1.push_back(Point(15.5755523607748, -1.98925544794189));
-	polygon1.push_back(Point(6.36376361985472, -6.18144673123487));
+    //åˆ›å»ºä¸‰ä¸ªä¸ç›¸äº¤çš„åµŒå¥—å¤šè¾¹å½¢
+    Polygon_2 polygon1;
+    polygon1.push_back(Point(-0.558868038740926, -0.38960351089588));
+    polygon1.push_back(Point(2.77833686440678, 5.37465950363197));
+    polygon1.push_back(Point(6.97052814769976, 8.07751967312349));
+    polygon1.push_back(Point(13.9207400121065, 5.65046156174335));
+    polygon1.push_back(Point(15.5755523607748, -1.98925544794189));
+    polygon1.push_back(Point(6.36376361985472, -6.18144673123487));
 
-	Polygon_2 polygon2;
-	polygon2.push_back(Point(2.17935556413387, 1.4555590039808));
-	polygon2.push_back(Point(3.75630057749723, 4.02942327866582));
-	polygon2.push_back(Point(5.58700685737883, 4.71820385921534));
-	polygon2.push_back(Point(6.54767450919789, 1.76369768475295));
-	polygon2.push_back(Point(5.71388749063795, -0.900795613688593));
-	polygon2.push_back(Point(3.21252643495814, -0.320769861646896));
+    Polygon_2 polygon2;
+    polygon2.push_back(Point(2.17935556413387, 1.4555590039808));
+    polygon2.push_back(Point(3.75630057749723, 4.02942327866582));
+    polygon2.push_back(Point(5.58700685737883, 4.71820385921534));
+    polygon2.push_back(Point(6.54767450919789, 1.76369768475295));
+    polygon2.push_back(Point(5.71388749063795, -0.900795613688593));
+    polygon2.push_back(Point(3.21252643495814, -0.320769861646896));
 
-	Polygon_2 polygon3;
-	polygon3.push_back(Point(7.74397762278389, 0.821155837685192));
-	polygon3.push_back(Point(9.13966458863422, 4.24693293568146));
-	polygon3.push_back(Point(10.1909612642098, 1.83620090375816));
-	polygon3.push_back(Point(12.1485481773505, 4.84508449247446));
-	polygon3.push_back(Point(11.4416417920497, -2.29648257953892));
-	polygon3.push_back(Point(10.1547096547072, 0.712401009177374));
+    Polygon_2 polygon3;
+    polygon3.push_back(Point(7.74397762278389, 0.821155837685192));
+    polygon3.push_back(Point(9.13966458863422, 4.24693293568146));
+    polygon3.push_back(Point(10.1909612642098, 1.83620090375816));
+    polygon3.push_back(Point(12.1485481773505, 4.84508449247446));
+    polygon3.push_back(Point(11.4416417920497, -2.29648257953892));
+    polygon3.push_back(Point(10.1547096547072, 0.712401009177374));
 
-	//½«¶à±ßÐÎ²åÈëÊÜÔ¼ÊøµÄÈý½ÇÆÊ·Ö
-	CDT cdt;
-	cdt.insert_constraint(polygon1.vertices_begin(), polygon1.vertices_end(), true);
-	cdt.insert_constraint(polygon2.vertices_begin(), polygon2.vertices_end(), true);
-	cdt.insert_constraint(polygon3.vertices_begin(), polygon3.vertices_end(), true);
+    //å°†å¤šè¾¹å½¢æ’å…¥å—çº¦æŸçš„ä¸‰è§’å‰–åˆ†
+    CDT cdt;
+    cdt.insert_constraint(polygon1.vertices_begin(), polygon1.vertices_end(), true);
+    cdt.insert_constraint(polygon2.vertices_begin(), polygon2.vertices_end(), true);
+    cdt.insert_constraint(polygon3.vertices_begin(), polygon3.vertices_end(), true);
 
-	//±ê¼ÇÓÉ¶à±ßÐÎ½ç¶¨µÄÓòÄÚµÄÃæ
-	mark_domains(cdt);
+    //æ ‡è®°ç”±å¤šè¾¹å½¢ç•Œå®šçš„åŸŸå†…çš„é¢
+    mark_domains(cdt);
 
-	//±éÀúËùÓÐµÄÃæ
-	int count = 0;
-	for (Face_handle f : cdt.finite_face_handles())
-	{
-		if (f->info().in_domain()) ++count;
-	}
-	std::cout << "There are " << count << " facets in the domain." << std::endl;
+    //éåŽ†æ‰€æœ‰çš„é¢
+    int count = 0;
+    for (Face_handle f : cdt.finite_face_handles())
+    {
+        if (f->info().in_domain()) ++count;
+    }
+    std::cout << "There are " << count << " facets in the domain." << std::endl;
 
-	//½«½á¹ûÊä³ö³ÉshpÎÄ¼þ£¬·½±ã²é¿´
-	//{
-	//	GDALAllRegister();
+    //å°†ç»“æžœè¾“å‡ºæˆshpæ–‡ä»¶ï¼Œæ–¹ä¾¿æŸ¥çœ‹
+    //{
+    //	GDALAllRegister();
 
-	//	GDALDriver* driver = GetGDALDriverManager()->GetDriverByName("ESRI Shapefile");
-	//	if (!driver)
-	//	{
-	//		printf("Get Driver ESRI Shapefile Error£¡\n");
-	//		return false;
-	//	}
+    //	GDALDriver* driver = GetGDALDriverManager()->GetDriverByName("ESRI Shapefile");
+    //	if (!driver)
+    //	{
+    //		printf("Get Driver ESRI Shapefile Errorï¼\n");
+    //		return false;
+    //	}
 
-	//	const char* filePath = "D:/test.shp";
-	//	GDALDataset* dataset = driver->Create(filePath, 0, 0, 0, GDT_Unknown, NULL);
-	//	OGRLayer* poLayer = dataset->CreateLayer("test", NULL, wkbPolygon, NULL);
+    //	const char* filePath = "D:/test.shp";
+    //	GDALDataset* dataset = driver->Create(filePath, 0, 0, 0, GDT_Unknown, NULL);
+    //	OGRLayer* poLayer = dataset->CreateLayer("test", NULL, wkbPolygon, NULL);
 
-	//	//´´½¨ÃæÒªËØ
-	//	for (Face_handle f : cdt.finite_face_handles())
-	//	{
-	//		if (f->info().in_domain())
-	//		{
-	//			OGRFeature* poFeature = new OGRFeature(poLayer->GetLayerDefn());
+    //	//åˆ›å»ºé¢è¦ç´ 
+    //	for (Face_handle f : cdt.finite_face_handles())
+    //	{
+    //		if (f->info().in_domain())
+    //		{
+    //			OGRFeature* poFeature = new OGRFeature(poLayer->GetLayerDefn());
 
-	//			OGRLinearRing ogrring;
-	//			for (int i = 0; i < 3; i++)
-	//			{
-	//				ogrring.setPoint(i, f->vertex(i)->point().x(), f->vertex(i)->point().y());
-	//			}
-	//			ogrring.closeRings();
+    //			OGRLinearRing ogrring;
+    //			for (int i = 0; i < 3; i++)
+    //			{
+    //				ogrring.setPoint(i, f->vertex(i)->point().x(), f->vertex(i)->point().y());
+    //			}
+    //			ogrring.closeRings();
 
-	//			OGRPolygon polygon;
-	//			polygon.addRing(&ogrring);
-	//			poFeature->SetGeometry(&polygon);
+    //			OGRPolygon polygon;
+    //			polygon.addRing(&ogrring);
+    //			poFeature->SetGeometry(&polygon);
 
-	//			if (poLayer->CreateFeature(poFeature) != OGRERR_NONE)
-	//			{
-	//				printf("Failed to create feature in shapefile.\n");
-	//				return false;
-	//			}
-	//		}
-	//	}
+    //			if (poLayer->CreateFeature(poFeature) != OGRERR_NONE)
+    //			{
+    //				printf("Failed to create feature in shapefile.\n");
+    //				return false;
+    //			}
+    //		}
+    //	}
 
-	//	//ÊÍ·Å
-	//	GDALClose(dataset);
-	//	dataset = nullptr;
-	//}
+    //	//é‡Šæ”¾
+    //	GDALClose(dataset);
+    //	dataset = nullptr;
+    //}
 
 
-	return 0;
+    return 0;
 }
